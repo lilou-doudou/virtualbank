@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # VirtualBank — API de Gestion de Comptes Bancaires
 
 ## 📋 Idée du Projet
@@ -257,7 +256,4 @@ L'agent analysera les services Spring et génèrera automatiquement les classes 
 ---
 
 **Version** : 1.1.0-SNAPSHOT — **Dernière mise à jour** : Mars 2026
-=======
-# virtualbank
-VirtualBank est une API Spring Boot complète pour la gestion d'utilisateurs et de comptes bancaires, associée à un agent IA générateur de tests unitaires pour les services Spring.
->>>>>>> origin/main
+
