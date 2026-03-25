@@ -16,6 +16,7 @@ public interface BankAccountMapper {
      * Convertit une entité BankAccount en record BankAccountDto.
      * MapStruct utilise le constructeur canonique du record.
      */
+    @Mapping(source = "user.id", target = "userId")
     BankAccountDto toDto(BankAccount bankAccount);
 
     /**
@@ -28,6 +29,7 @@ public interface BankAccountMapper {
      * MapStruct utilise les accesseurs du record (id(), ownerName(), …).
      */
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "user", ignore = true)
     @Mapping(target = "operations", ignore = true)
     BankAccount toEntity(BankAccountDto dto);
 
@@ -36,6 +38,7 @@ public interface BankAccountMapper {
      * La cible est l'entité (mutable), la source est le record (immuable).
      */
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "user", ignore = true)
     @Mapping(target = "operations", ignore = true)
     void updateEntityFromDto(BankAccountDto dto, @MappingTarget BankAccount bankAccount);
 }

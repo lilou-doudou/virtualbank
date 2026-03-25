@@ -4,6 +4,7 @@ import com.virtuallink.virtualbank.dto.BankAccountDto;
 import com.virtuallink.virtualbank.dto.OperationDto;
 import com.virtuallink.virtualbank.requests.AmountRequestDto;
 import com.virtuallink.virtualbank.requests.CreateAccountRequestDto;
+import com.virtuallink.virtualbank.requests.CreateAccountsBatchRequestDto;
 import com.virtuallink.virtualbank.requests.TransferRequestDto;
 import com.virtuallink.virtualbank.exceptions.ErrorResponse;
 import com.virtuallink.virtualbank.service.BankAccountService;
@@ -45,6 +46,18 @@ public class BankAccountController {
     @PostMapping
     public ResponseEntity<BankAccountDto> createAccount(@Valid @RequestBody CreateAccountRequestDto request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(bankAccountService.createAccount(request));
+    }
+
+    @Operation(summary = "Creer plusieurs comptes", description = "Cree une liste de comptes bancaires en une seule requete.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Comptes crees avec succes"),
+            @ApiResponse(responseCode = "400", description = "Donnees invalides",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @PostMapping("/batch")
+    public ResponseEntity<List<BankAccountDto>> createAccountsBatch(
+            @Valid @RequestBody CreateAccountsBatchRequestDto request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(bankAccountService.createAccountsBatch(request));
     }
 
     // ── GET /api/v1/accounts ──────────────────────────────────────────────────

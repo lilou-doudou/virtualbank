@@ -4,6 +4,7 @@ import com.virtuallink.virtualbank.dto.BankAccountDto;
 import com.virtuallink.virtualbank.dto.OperationDto;
 import com.virtuallink.virtualbank.requests.AmountRequestDto;
 import com.virtuallink.virtualbank.requests.CreateAccountRequestDto;
+import com.virtuallink.virtualbank.requests.CreateAccountsBatchRequestDto;
 import com.virtuallink.virtualbank.requests.TransferRequestDto;
 
 import java.util.List;
@@ -15,6 +16,9 @@ public interface BankAccountService {
 
     /** Crée un nouveau compte bancaire. */
     BankAccountDto createAccount(CreateAccountRequestDto request);
+
+    /** Crée plusieurs comptes bancaires en une seule requête. */
+    List<BankAccountDto> createAccountsBatch(CreateAccountsBatchRequestDto request);
 
     /** Retourne le détail d'un compte par son identifiant. */
     BankAccountDto getAccount(String accountId);

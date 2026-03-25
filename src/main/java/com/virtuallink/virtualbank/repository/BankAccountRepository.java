@@ -13,6 +13,9 @@ public interface BankAccountRepository extends JpaRepository<BankAccount, String
     /** Recherche tous les comptes ayant un statut donné. */
     List<BankAccount> findAllByAccountStatus(AccountStatus status);
 
+    /** Recherche tous les comptes appartenant à un utilisateur. */
+    List<BankAccount> findAllByUserId(String userId);
+
     /** Vérifie l'existence d'un compte par nom du titulaire. */
     boolean existsByOwnerName(String ownerName);
 }

@@ -32,6 +32,10 @@ public class BankAccount {
     private OffsetDateTime updatedAt;
     private OffsetDateTime closedAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @OneToMany(mappedBy = "bankAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<Operation> operations = new ArrayList<>();

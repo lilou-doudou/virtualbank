@@ -1,0 +1,50 @@
+### Variables
+@baseUrl = http://localhost:8080
+@contentType = application/json
+@accountId = REPLACE_WITH_SOURCE_ACCOUNT_ID
+@toAccountId = REPLACE_WITH_TARGET_ACCOUNT_ID
+
+### 1) Lister tous les comptes
+GET {{baseUrl}}/api/v1/accounts
+Accept: application/json
+
+### 2) Consulter un compte par ID
+GET {{baseUrl}}/api/v1/accounts/{{accountId}}
+Accept: application/json
+
+### 3) Depot sur un compte
+POST {{baseUrl}}/api/v1/accounts/{{accountId}}/deposit
+Content-Type: {{contentType}}
+
+{
+  "amount": 250.0,
+  "description": "Depot cash"
+}
+
+### 4) Retrait sur un compte
+POST {{baseUrl}}/api/v1/accounts/{{accountId}}/withdraw
+Content-Type: {{contentType}}
+
+{
+  "amount": 100.0,
+  "description": "Retrait ATM"
+}
+
+### 5) Virement vers un autre compte
+POST {{baseUrl}}/api/v1/accounts/{{accountId}}/transfer
+Content-Type: {{contentType}}
+
+{
+  "toAccountId": "{{toAccountId}}",
+  "amount": 75.0,
+  "description": "Virement entre comptes"
+}
+
+### 6) Historique des operations du compte source
+GET {{baseUrl}}/api/v1/accounts/{{accountId}}/operations
+Accept: application/json
+
+### 7) Historique des operations du compte destinataire
+GET {{baseUrl}}/api/v1/accounts/{{toAccountId}}/operations
+Accept: application/json
+

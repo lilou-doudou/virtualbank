@@ -4,6 +4,7 @@ import com.virtuallink.virtualbank.dto.BankAccountDto;
 import com.virtuallink.virtualbank.dto.OperationDto;
 import com.virtuallink.virtualbank.requests.AmountRequestDto;
 import com.virtuallink.virtualbank.requests.CreateAccountRequestDto;
+import com.virtuallink.virtualbank.requests.CreateAccountsBatchRequestDto;
 import com.virtuallink.virtualbank.requests.TransferRequestDto;
 import com.virtuallink.virtualbank.enums.AccountStatus;
 import com.virtuallink.virtualbank.enums.OperationType;
@@ -11,12 +12,15 @@ import com.virtuallink.virtualbank.exceptions.AccountNotActiveException;
 import com.virtuallink.virtualbank.exceptions.BankAccountNotFoundException;
 import com.virtuallink.virtualbank.exceptions.InsufficientFundsException;
 import com.virtuallink.virtualbank.exceptions.InvalidOperationException;
+import com.virtuallink.virtualbank.exceptions.UserNotFoundException;
 import com.virtuallink.virtualbank.mapper.BankAccountMapper;
 import com.virtuallink.virtualbank.mapper.OperationMapper;
 import com.virtuallink.virtualbank.models.BankAccount;
 import com.virtuallink.virtualbank.models.Operation;
+import com.virtuallink.virtualbank.models.User;
 import com.virtuallink.virtualbank.repository.BankAccountRepository;
 import com.virtuallink.virtualbank.repository.OperationRepository;
+import com.virtuallink.virtualbank.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implémentation du service métier de gestion des comptes bancaires.
@@ -35,6 +40,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     private final BankAccountRepository accountRepository;
     private final OperationRepository operationRepository;
+    private final UserRepository userRepository;
     private final BankAccountMapper bankAccountMapper;
     private final OperationMapper operationMapper;
 
@@ -43,12 +49,16 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     @Transactional
     public BankAccountDto createAccount(CreateAccountRequestDto request) {
-        log.info("Création d'un compte pour '{}'", request.ownerName());
+        User user = userRepository.findById(request.userId())
+                .orElseThrow(() -> new UserNotFoundException(request.userId()));
+
+        log.info("Création d'un compte pour l'utilisateur '{}'", user.fullName());
 
         BankAccount account = BankAccount.builder()
-                .ownerName(request.ownerName())
+                .ownerName(user.fullName())
                 .balance(request.initialBalance())
                 .accountStatus(AccountStatus.ACTIVE)
+                .user(user)
                 .createdAt(OffsetDateTime.now())
                 .updatedAt(OffsetDateTime.now())
                 .build();
@@ -61,6 +71,16 @@ public class BankAccountServiceImpl implements BankAccountService {
 
         log.info("Compte créé avec l'id '{}'", saved.getId());
         return bankAccountMapper.toDto(saved);
+    }
+
+    @Override
+    @Transactional
+    public List<BankAccountDto> createAccountsBatch(CreateAccountsBatchRequestDto request) {
+        log.info("Creation batch de {} comptes", request.accounts().size());
+        return request.accounts()
+                .stream()
+                .map(this::createAccount)
+                .collect(Collectors.toList());
     }
 
     // ── Consultation ───────────────────────────────────────────────────────────

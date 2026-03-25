@@ -1,42 +1,48 @@
-# VirtualBank - API de Gestion de Comptes Bancaires
+# VirtualBank — API de Gestion de Comptes Bancaires
 
 ## 📋 Idée du Projet
 
-VirtualBank est une API Spring Boot complète pour la gestion de comptes bancaires, associée à un agent IA générateur de tests unitaires pour les services Spring. Ce projet démontre les meilleures pratiques modernes en développement Java/Spring.
+VirtualBank est une API Spring Boot complète pour la gestion d'utilisateurs et de comptes bancaires, associée à un agent IA générateur de tests unitaires pour les services Spring.
 
 ### Objectifs
 
-1. **API Spring Boot de gestion de comptes bancaires** - Fournir une API REST robuste et bien structurée
-2. **Agent IA générateur de tests unitaires** - Automatiser la génération de tests pour les services Spring
+1. **API Spring Boot de gestion bancaire** — Fournir une API REST robuste et bien structurée
+2. **Agent IA générateur de tests unitaires** — Automatiser la génération de tests pour les services Spring
 
 ---
 
 ## 🎯 Fonctionnalités
 
-### Gestion des Comptes
+### 👤 Gestion des Utilisateurs
+- ✅ **Création d'un utilisateur** — Prénom, nom, email unique, mot de passe, rôle USER/ADMIN
+- ✅ **Consultation** — Détails d'un profil
+- ✅ **Mise à jour** — Modifier prénom, nom ou email
+- ✅ **Suppression** — Supprime l'utilisateur et tous ses comptes
+- ✅ **Comptes d'un utilisateur** — Lister tous les comptes rattachés
 
-- ✅ **Création d'un compte bancaire** - Initialiser un nouveau compte avec les informations de base
-- ✅ **Consultation d'un compte** - Accéder aux détails et au solde d'un compte
-- ✅ **Dépôt** - Ajouter des fonds à un compte
-- ✅ **Retrait** - Retirer des fonds d'un compte
-- ✅ **Virement entre comptes** - Effectuer des transferts entre deux comptes
-- ✅ **Liste des opérations** - Consulter l'historique complet des transactions
+### 🏦 Gestion des Comptes Bancaires
+- ✅ **Création d'un compte** — Rattaché à un utilisateur existant
+- ✅ **Création batch** — Jusqu'à 100 comptes en une seule requête
+- ✅ **Consultation** — Détails, solde avec devise €, statut
+- ✅ **Dépôt / Retrait** — Avec vérification du solde
+- ✅ **Virement** — Entre deux comptes actifs
+- ✅ **Historique des opérations** — Trié par date décroissante
+- ✅ **Fermeture** — Passage au statut CLOSED (irréversible)
 
 ---
 
 ## 🛠️ Stack Technique
 
 | Composant | Version | Description |
-|-----------|---------|-------------|
-| **Java** | 21 | Langage de programmation |
-| **Spring Boot** | 3.4.x | Framework d'application |
-| **Spring Web** | 3.4.x | REST API et contrôleurs |
-| **Spring Data JPA** | 3.4.x | Accès aux données et persistance |
-| **H2 Database** | Latest | Base de données en mémoire (développement) |
-| **Lombok** | Latest | Réduction du boilerplate code |
-| **Validation** | 3.4.x | Validation des données |
-| **JUnit 5** | Latest | Framework de tests unitaires |
-| **Mockito** | Latest | Mock et spy pour les tests |
+|---|---|---|
+| **Java** | 22 | Langage de programmation |
+| **Spring Boot** | 3.4.3 | Framework d'application |
+| **Spring Data JPA** | — | Accès aux données |
+| **H2 Database** | — | Base en mémoire (dev) |
+| **Lombok** | 1.18.38 | Réduction du boilerplate |
+| **MapStruct** | 1.6.3 | Mapping entités ↔ DTOs |
+| **Springdoc OpenAPI** | 2.8.5 | Documentation Swagger UI |
+| **JUnit 5 + MockMvc** | — | Tests d'intégration |
 
 ---
 
@@ -44,187 +50,209 @@ VirtualBank est une API Spring Boot complète pour la gestion de comptes bancair
 
 ```
 virtualbank/
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── com/virtuallink/virtualbank/
-│   │   │       ├── VirtualbankApplication.java
-│   │   │       ├── controller/          # Contrôleurs REST
-│   │   │       ├── service/             # Logique métier
-│   │   │       ├── repository/          # Accès aux données
-│   │   │       ├── entity/              # Entités JPA
-│   │   │       ├── dto/                 # Data Transfer Objects
-│   │   │       ├── exception/           # Gestion des exceptions
-│   │   │       └── config/              # Configuration
-│   │   └── resources/
-│   │       ├── application.yaml         # Configuration Spring
-│   │       └── data.sql                 # Données initiales
-│   └── test/
-│       └── java/com/virtuallink/virtualbank/
-│           └── ...                      # Tests unitaires
-├── pom.xml
-└── README.md
+├── src/main/java/com/virtuallink/virtualbank/
+│   ├── config/                    # OpenApiConfig
+│   ├── controllers/
+│   │   ├── UserController.java
+│   │   └── BankAccountController.java
+│   ├── service/
+│   │   ├── UserService.java / UserServiceImpl.java
+│   │   └── BankAccountService.java / BankAccountServiceImpl.java
+│   ├── repository/
+│   │   ├── UserRepository.java
+│   │   ├── BankAccountRepository.java
+│   │   └── OperationRepository.java
+│   ├── models/
+│   │   ├── User.java
+│   │   ├── BankAccount.java
+│   │   └── Operation.java
+│   ├── dto/                       # Réponses API (Java records)
+│   │   ├── UserDto.java
+│   │   ├── BankAccountDto.java
+│   │   └── OperationDto.java
+│   ├── requests/                  # Corps de requêtes (Java records)
+│   │   ├── CreateUserRequestDto.java
+│   │   ├── UpdateUserRequestDto.java
+│   │   ├── CreateAccountRequestDto.java
+│   │   ├── CreateAccountsBatchRequestDto.java
+│   │   ├── AmountRequestDto.java
+│   │   └── TransferRequestDto.java
+│   ├── mapper/
+│   │   ├── UserMapper.java
+│   │   ├── BankAccountMapper.java
+│   │   └── OperationMapper.java
+│   ├── enums/
+│   │   ├── UserRole.java          # USER | ADMIN
+│   │   ├── AccountStatus.java     # ACTIVE | INACTIVE | SUSPENDED | CLOSED
+│   │   └── OperationType.java     # DEPOSIT | WITHDRAWAL | TRANSFER_*
+│   └── exceptions/
+│       ├── GlobalExceptionHandler.java
+│       ├── ErrorResponse.java
+│       ├── UserNotFoundException.java
+│       ├── EmailAlreadyExistsException.java
+│       ├── BankAccountNotFoundException.java
+│       ├── InsufficientFundsException.java
+│       ├── AccountNotActiveException.java
+│       └── InvalidOperationException.java
+├── requests/                      # Fichiers .http IntelliJ
+│   ├── accounts.http
+│   └── transactions.http
+└── pom.xml
 ```
 
 ---
 
 ## 🚀 Démarrage Rapide
 
-### Prérequis
+```bash
+./mvnw clean compile     # Compiler
+./mvnw test              # Tests
+./mvnw spring-boot:run   # Démarrer
+```
 
-- JDK 21 ou supérieur
-- Maven 3.8.x ou supérieur
+---
 
-### Installation et Exécution
+## 🌐 URLs utiles
+
+| URL | Description |
+|---|---|
+| `http://localhost:8080/swagger-ui.html` | Swagger UI |
+| `http://localhost:8080/v3/api-docs` | Spec OpenAPI JSON |
+| `http://localhost:8080/h2-console` | Console H2 |
+
+**Connexion H2** : JDBC URL `jdbc:h2:mem:virtualbankdb` — User `sa` — Password *(vide)*
+
+---
+
+## 📝 Endpoints API
+
+### 👤 Utilisateurs — `/api/v1/users`
+
+| Méthode | URL | Description | Code |
+|---|---|---|---|
+| `POST` | `/api/v1/users` | Créer un utilisateur | 201 |
+| `GET` | `/api/v1/users` | Lister tous les utilisateurs | 200 |
+| `GET` | `/api/v1/users/{id}` | Consulter un utilisateur | 200 |
+| `PUT` | `/api/v1/users/{id}` | Mettre à jour | 200 |
+| `DELETE` | `/api/v1/users/{id}` | Supprimer | 204 |
+| `GET` | `/api/v1/users/{id}/accounts` | Comptes de l'utilisateur | 200 |
+
+### 🏦 Comptes — `/api/v1/accounts`
+
+| Méthode | URL | Description | Code |
+|---|---|---|---|
+| `POST` | `/api/v1/accounts` | Créer un compte | 201 |
+| `POST` | `/api/v1/accounts/batch` | Créer plusieurs comptes | 201 |
+| `GET` | `/api/v1/accounts` | Lister tous les comptes | 200 |
+| `GET` | `/api/v1/accounts/{id}` | Consulter un compte | 200 |
+| `POST` | `/api/v1/accounts/{id}/deposit` | Dépôt | 200 |
+| `POST` | `/api/v1/accounts/{id}/withdraw` | Retrait | 200 |
+| `POST` | `/api/v1/accounts/{id}/transfer` | Virement | 200 |
+| `GET` | `/api/v1/accounts/{id}/operations` | Historique | 200 |
+| `DELETE` | `/api/v1/accounts/{id}` | Fermer un compte | 200 |
+
+### 🔄 Flux complet
+
+```json
+// 1. Créer un utilisateur
+POST /api/v1/users
+{ "firstName": "Alice", "lastName": "Dupont", "email": "alice@test.com", "password": "secret123" }
+
+// 2. Créer un compte pour cet utilisateur
+POST /api/v1/accounts
+{ "userId": "<id-retourné>", "initialBalance": 1500.0 }
+
+// 3. Dépôt
+POST /api/v1/accounts/<account-id>/deposit
+{ "amount": 250.0, "description": "Salaire" }
+
+// 4. Virement
+POST /api/v1/accounts/<account-id>/transfer
+{ "toAccountId": "<autre-id>", "amount": 100.0, "description": "Loyer" }
+```
+
+---
+
+## 📐 Modèle de données
+
+```
+User (bank_users)
+ ├── id          UUID
+ ├── firstName   String
+ ├── lastName    String
+ ├── email       String (unique)
+ ├── password    String
+ ├── role        UserRole (USER | ADMIN)
+ ├── createdAt / updatedAt
+ └── accounts    OneToMany → BankAccount
+
+BankAccount (bank_accounts)
+ ├── id            UUID
+ ├── ownerName     String (= user.firstName + user.lastName)
+ ├── balance       double  (+balanceDisplay "1500.00 €")
+ ├── accountStatus AccountStatus
+ ├── createdAt / updatedAt
+ ├── closedAt      OffsetDateTime (absent du JSON si null)
+ ├── user          ManyToOne → User
+ └── operations    OneToMany → Operation
+
+Operation (operations)
+ ├── id            UUID
+ ├── type          OperationType
+ ├── amount        double
+ ├── description   String
+ ├── operationDate OffsetDateTime
+ └── bankAccount   ManyToOne → BankAccount
+```
+
+---
+
+## 🛡️ Gestion des Erreurs
+
+```json
+{
+  "timestamp": "2026-03-25T14:00:00+01:00",
+  "status": 404,
+  "error": "Not Found",
+  "message": "Utilisateur introuvable avec l'identifiant : abc-123",
+  "path": "/api/v1/users/abc-123"
+}
+```
+
+| Code | Cas d'usage |
+|---|---|
+| `400` | Données invalides (validation) |
+| `404` | Utilisateur ou compte introuvable |
+| `409` | Email déjà existant, compte non actif |
+| `422` | Solde insuffisant, opération invalide |
+| `500` | Erreur interne |
+
+---
+
+## 🧪 Tests
 
 ```bash
-# Cloner le projet
-git clone <repository-url>
-cd virtualbank
-
-# Compiler le projet
-./mvnw clean compile
-
-# Lancer les tests
-./mvnw test
-
-# Démarrer l'application
-./mvnw spring-boot:run
-```
-
-L'API sera disponible à `http://localhost:8080`
-
----
-
-## 📝 Endpoints API (Exemple)
-
-### Comptes
-
-```
-POST   /api/accounts              # Créer un compte
-GET    /api/accounts/{id}         # Consulter un compte
-GET    /api/accounts              # Lister tous les comptes
-```
-
-### Opérations
-
-```
-POST   /api/accounts/{id}/deposit # Effectuer un dépôt
-POST   /api/accounts/{id}/withdraw # Effectuer un retrait
-POST   /api/accounts/{from}/transfer # Virement entre comptes
-GET    /api/accounts/{id}/operations # Historique des opérations
-```
-
----
-
-## 🧪 Tests Unitaires
-
-Ce projet intègre un agent IA pour la génération automatisée de tests unitaires. Les tests sont structurés avec :
-
-- **JUnit 5** pour le framework de tests
-- **Mockito** pour les mocks et spies
-- **AssertJ** pour les assertions fluides (optionnel)
-
-### Lancer les tests
-
-```bash
 ./mvnw test
 ```
 
-### Générer des tests avec l'agent IA
+**4 tests d'intégration MockMvc + H2 :**
 
-*Documentation de l'agent IA à venir*
-
----
-
-## 🏗️ Architecture
-
-L'application suit une architecture en couches classique :
-
-- **Controller Layer** : Gestion des requêtes HTTP
-- **Service Layer** : Logique métier et orchestration
-- **Repository Layer** : Accès aux données (Spring Data JPA)
-- **Entity Layer** : Modèle de données persistant
-- **DTO Layer** : Transformation des données pour l'API
+| Test | Ce qui est vérifié |
+|---|---|
+| `closedAt` absent si compte ouvert | Sérialisation JSON conditionnelle |
+| `closedAt` présent après fermeture | Contrat JSON post-fermeture |
+| Création batch | Plusieurs comptes + `closedAt` absent |
+| Comptes d'un utilisateur | Liaison User ↔ BankAccount |
+| Email dupliqué → 409 | Unicité de l'email |
 
 ---
 
-## 💾 Persistance des Données
+## 🤖 Agent IA — Génération de Tests
 
-L'application utilise **H2 Database** pour le stockage en mémoire lors du développement. Cela permet un démarrage rapide sans configuration externe.
+*Prochaine étape du projet.*
 
-Pour la production, vous pouvez configurer une base de données relationnelle (PostgreSQL, MySQL, etc.) dans `application.yaml`.
-
----
-
-## 🔒 Validation
-
-Tous les inputs sont validés à l'aide de :
-
-- **Jakarta Validation API**
-- **Contraintes personnalisées** pour les règles métier spécifiques
-
-Exemple :
-- Montants positifs pour les dépôts/retraits
-- Solde suffisant pour les retraits
-- Identifiants de comptes valides
+L'agent analysera les services Spring et génèrera automatiquement les classes de test JUnit 5 avec mocks Mockito, cas nominaux et cas d'erreur.
 
 ---
 
-## 📚 Technologies et Dépendances
-
-Pour une liste complète des dépendances, consultez `pom.xml`.
-
-### Principales dépendances
-
-```xml
-<!-- Spring Boot -->
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-web</artifactId>
-</dependency>
-
-<!-- Spring Data JPA -->
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-jpa</artifactId>
-</dependency>
-
-<!-- H2 Database -->
-<dependency>
-    <groupId>com.h2database</groupId>
-    <artifactId>h2</artifactId>
-    <scope>runtime</scope>
-</dependency>
-
-<!-- Lombok -->
-<dependency>
-    <groupId>org.projectlombok</groupId>
-    <artifactId>lombok</artifactId>
-    <optional>true</optional>
-</dependency>
-
-<!-- Validation -->
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-validation</artifactId>
-</dependency>
-```
-
----
-
-## 📄 Licence
-
-Ce projet est fourni à titre d'exemple éducatif.
-
----
-
-## 📞 Support
-
-Pour toute question ou suggestion concernant ce projet, veuillez consulter la documentation ou créer une issue.
-
----
-
-**Dernière mise à jour** : Mars 2026
-**Version** : 1.0.0-SNAPSHOT
-
+**Version** : 1.1.0-SNAPSHOT — **Dernière mise à jour** : Mars 2026
